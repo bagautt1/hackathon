@@ -1,0 +1,132 @@
+﻿<Window x:Class="CoreIsolatorGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CPU Core Isolator" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Заголовок -->
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="CPU Core Isolator - GUI Version" 
+                   FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <!-- Список процессов -->
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="Running Processes" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBox x:Name="SearchBox" Grid.Row="0" Margin="5"
+         TextChanged="SearchBox_TextChanged">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <Trigger Property="Text" Value="">
+                                    <Setter Property="Background">
+                                        <Setter.Value>
+                                            <VisualBrush Stretch="None" AlignmentX="Left">
+                                                <VisualBrush.Visual>
+                                                    <TextBlock Text="Search processes..." 
+                                              Foreground="Gray" 
+                                              Margin="2,0"/>
+                                                </VisualBrush.Visual>
+                                            </VisualBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+                <ListBox x:Name="ProcessesListBox" Grid.Row="1" Margin="5"
+                        SelectionChanged="ProcessesListBox_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="2">
+                                <TextBlock Text="{Binding ProcessName}" FontWeight="Bold" Width="150"/>
+                                <TextBlock Text=" | "/>
+                                <TextBlock Text="{Binding Id}" Width="80" Foreground="Gray"/>
+                                <TextBlock Text=" | "/>
+                                <TextBlock Text="{Binding PriorityClass}" Width="100"/>
+                                <TextBlock Text=" | CPU: "/>
+                                <TextBlock Text="{Binding ProcessorAffinity}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="RefreshBtn" Content="Refresh" Click="RefreshBtn_Click" 
+                           Margin="5" Padding="10,5"/>
+                    <Button x:Name="KillProcessBtn" Content="Kill Process" Click="KillProcessBtn_Click"
+                           Margin="5" Padding="10,5" Background="LightCoral"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <!-- Панель управления -->
+        <GroupBox Grid.Row="1" Grid.Column="2" Header="Isolation Controls">
+            <StackPanel Margin="5">
+                <TextBlock Text="Selected Process:" FontWeight="Bold" Margin="0,5"/>
+                <TextBlock x:Name="SelectedProcessText" Text="None" Foreground="Blue" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Target CPU Core:" FontWeight="Bold" Margin="0,5"/>
+                <ComboBox x:Name="CpuCoreComboBox" Margin="0,0,0,10"
+                         SelectionChanged="CpuCoreComboBox_SelectionChanged"/>
+
+                <TextBlock Text="Priority Class:" FontWeight="Bold" Margin="0,5"/>
+                <ComboBox x:Name="PriorityComboBox" Margin="0,0,0,10">
+                    <ComboBoxItem Content="RealTime" Tag="RealTime"/>
+                    <ComboBoxItem Content="High" Tag="High" IsSelected="True"/>
+                    <ComboBoxItem Content="AboveNormal" Tag="AboveNormal"/>
+                    <ComboBoxItem Content="Normal" Tag="Normal"/>
+                    <ComboBoxItem Content="BelowNormal" Tag="BelowNormal"/>
+                    <ComboBoxItem Content="Idle" Tag="Idle"/>
+                </ComboBox>
+
+                <Button x:Name="IsolateBtn" Content="ISOLATE PROCESS" 
+                       Click="IsolateBtn_Click" Background="LightGreen" 
+                       FontWeight="Bold" Padding="15,10" Margin="0,10"/>
+
+                <Button x:Name="MonitorBtn" Content="START MONITORING" 
+                       Click="MonitorBtn_Click" Background="LightBlue" 
+                       Padding="10,5" Margin="0,5"/>
+
+                <ProgressBar x:Name="MonitoringProgress" Height="10" Margin="0,5" 
+                            Visibility="Collapsed"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Логи -->
+        <GroupBox Grid.Row="3" Grid.ColumnSpan="3" Header="Activity Log">
+            <TextBox x:Name="LogTextBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                    FontFamily="Consolas" FontSize="10"/>
+        </GroupBox>
+
+        <!-- Статус бар -->
+        <StatusBar Grid.Row="4" Grid.ColumnSpan="3">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Ready"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock x:Name="CpuCountText"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
